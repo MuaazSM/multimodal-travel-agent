@@ -3,6 +3,7 @@ from graph.state import TravelState
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from config.prompts import VECTOR_SUMMARY_PROMPT
 
 def city_summary_vector_node(state: TravelState):
     try:
@@ -20,20 +21,16 @@ def city_summary_vector_node(state: TravelState):
             chunks = results["documents"][0]
             context = "\n---\n".join(chunks)
 
-            prompt = PromptTemplate.from_template(
-                """Using ONLY the information provided below, write a comprehensive summary about {city}.
-
-                Information from knowledge base:
-                {context}
-
-                Write a well-structured summary (3-4 paragraphs) covering the most important aspects of this city.
-                Do not add any information not present in the provided context."""
-            )              
+            prompt = PromptTemplate.from_template(VECTOR_SUMMARY_PROMPT)
             llm = ChatOpenAI(model="gpt-4o", temperature=0)
             chain = prompt | llm | StrOutputParser()
 
             summary = chain.invoke({"city": state.city, "context": context})
-            state.city_summary = summary
+            state.city_summary = summary.strip()
+
+            if not state.city_summary:
+                state.city_summary = f"No summary generated for {state.city} from vector data."
+                state.errors.append("Vector summary was empty")
 
         else:
             state.city_summary = f"Information about {state.city} is not available."
@@ -43,3 +40,5 @@ def city_summary_vector_node(state: TravelState):
         state.city_summary = f"Unable to retrieve information about {state.city}."
         state.errors.append(f"Vector DB error: {str(e)}")
         return state
+
+    return state

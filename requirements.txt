@@ -1,6 +1,7 @@
 langchain
 langchain-openai
 langchain-core
+langgraph
 pypdf
 python-dotenv
 langchain-text-splitters
@@ -8,4 +9,6 @@ sentence_transformers
 chromadb
 tavily
 requests
+streamlit
+pandas
 requests

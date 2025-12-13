@@ -3,6 +3,7 @@ from tools.web_search import WebSearchTool
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from config.prompts import WEB_SUMMARY_PROMPT
 def city_summary_web_node(state):
     try:
         search_tool = WebSearchTool()
@@ -28,32 +29,19 @@ def city_summary_web_node(state):
             )
 
         context = "\n\n---\n\n".join(context_parts)
-        prompt = PromptTemplate.from_template(
-            """You are writing a city summary based ONLY on the search results provided below.
-
-            CRITICAL RULES:
-            - Use ONLY information from the provided search results below
-            - Do NOT add any information from your training data or general knowledge
-            - If something is not mentioned in the search results, do not include it
-            - Write in a clear, informative, and engaging style
-            - Aim for 3-4 well structured paragraphs
-            - Focus on the most important and interesting aspects mentioned in the sources
-
-            City: {city}
-
-            Search Results:
-            {context}
-
-            Write a comprehensive summary of {city} using ONLY the information provided above."""
-            )
+        prompt = PromptTemplate.from_template(WEB_SUMMARY_PROMPT)
         llm = ChatOpenAI(model="gpt-4o", temperature=0)
         chain = prompt | llm | StrOutputParser()
 
         print(f"Generating summary for {state.city}...")
         summary = chain.invoke({"city": state.city, "context": context})
 
-        state.city_summary = summary
-        print(f"Summary generated successfully ({len(summary)} characters)")
+        state.city_summary = (summary or "").strip()
+        if not state.city_summary:
+            state.city_summary = f"No summary generated for {state.city} from web search."
+            state.errors.append("Web summary was empty")
+        else:
+            print(f"Summary generated successfully ({len(summary)} characters)")
 
     except Exception as e:
         print(f"Error in web summary node: {e}")

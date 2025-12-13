@@ -3,14 +3,18 @@ from graph.state import TravelState
 
 def final_assembly_node(state: TravelState):
 
+    # Track the current city for the next query (context preservation)
+    state.previous_city = state.city
+
     # city presence is fundamental for rendering context
     if not state.city:
         state.errors.append("Final: city is missing from state")
 
     # summary fallback
     if not state.city_summary or not state.city_summary.strip():
+        city_label = state.city or "the city"
         state.city_summary = (
-            "We couldn't generate a city summary. Try refining your query or rerunning."
+            f"Summary for {city_label} isn't available right now. Key highlights: weather shown below; images provided."
         )
         state.errors.append("Final: missing city summary; using a default message")
 

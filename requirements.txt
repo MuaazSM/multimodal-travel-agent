@@ -6,3 +6,4 @@ python-dotenv
 langchain-text-splitters
 sentence_transformers
 chromadb
+tavily

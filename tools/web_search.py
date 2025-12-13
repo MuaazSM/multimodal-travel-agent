@@ -1,12 +1,10 @@
 from tavily import TavilyClient
 import os
-from dotenv import load_dotenv
+from config import settings
 class WebSearchTool:
     def __init__(self):
-        api_key = os.getenv("TAVILY_API_KEY")
-        if not api_key:
-            raise ValueError("Tavily api key not found in env")
-        
+        # .env loaded via config.settings import side-effect
+        api_key = settings.require_env(settings.TAVILY_API_KEY, "TAVILY_API_KEY")
         self.client = TavilyClient(api_key=api_key)
 
     def search(self, query, max_results=5):

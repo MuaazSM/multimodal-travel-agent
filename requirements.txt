@@ -7,3 +7,5 @@ langchain-text-splitters
 sentence_transformers
 chromadb
 tavily
+requests
+requests

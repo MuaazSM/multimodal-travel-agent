@@ -62,4 +62,3 @@ def build_app(enable_checkpointer=True):
 		return graph.compile(checkpointer=memory)
 	
 	return graph.compile()
-

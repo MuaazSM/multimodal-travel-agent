@@ -3,3 +3,6 @@ langchain-openai
 langchain-core
 pypdf
 python-dotenv
+langchain-text-splitters
+sentence_transformers
+chromadb

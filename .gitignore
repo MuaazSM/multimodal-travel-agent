@@ -67,7 +67,6 @@ ENV/
 
 # Docker
 *.log
-storage/chroma/
 
 # Data
 *.sqlite3
@@ -84,9 +83,6 @@ Thumbs.db
 # Misc
 *.swp
 *.swo
-
-# Ignore graph DB and cache
-storage/chroma/
 
 # Ignore test outputs
 *.out
